@@ -1,0 +1,106 @@
+﻿@model HaverProject.Models.NCR
+
+@{
+    ViewData["Title"] = "QualityEdit";
+}
+
+<h1>NCR - Edit</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="QualityEdit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+                <label asp-for="NCRNumber" class="control-label"></label>
+                <input asp-for="NCRNumber" class="form-control" />
+                <span asp-validation-for="NCRNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PONumber" class="control-label"></label>
+                <input asp-for="PONumber" class="form-control" />
+                <span asp-validation-for="PONumber" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="SupplierOrRecInsp" /> @Html.DisplayNameFor(model => model.SupplierOrRecInsp)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="WIP" /> @Html.DisplayNameFor(model => model.WIP)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Supplier" class="control-label"></label>
+                <select asp-for="Supplier" class="form-control">
+                    <option value="700285 Niagara Machine">700285 Niagara Machine</option>
+                    <option value="880065 Bickle Main Industrial Supply">880065 Bickle Main Industrial Supply </option>
+                    <option value="700397 Niagara Precision">700397 Niagara Precision</option>
+                    <option value="813024 Tandem">813024 Tandem</option>
+                    <option value="813024 Precision Metalworks">813024 Precision Metalworks</option>
+                    <option value="700013 Welland Operations">700013 Welland Operations</option>
+                    <option value="880004  Western Cast">880004 Western Cast</option>
+                    @foreach (var supplier in (SelectList)ViewData["SupplierList"])
+                    {
+                        <option value="@supplier.Value">@supplier.Text</option>
+                    }
+                </select>
+                <span asp-validation-for="Supplier" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="QuantityReceived" class="control-label"></label>
+                <input asp-for="QuantityReceived" class="form-control" />
+                <span asp-validation-for="QuantityReceived" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="QuantityDefected" class="control-label"></label>
+                <input asp-for="QuantityDefected" class="form-control" />
+                <span asp-validation-for="QuantityDefected" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DescriptionItem" class="control-label"></label>
+                <input asp-for="DescriptionItem" class="form-control" />
+                <span asp-validation-for="DescriptionItem" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DescriptionDefect" class="control-label"></label>
+                <input asp-for="DescriptionDefect" class="form-control" />
+                <span asp-validation-for="DescriptionDefect" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Yes" /> @Html.DisplayNameFor(model => model.Yes)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="No" /> @Html.DisplayNameFor(model => model.No)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" type="date" asp-format="{0:yyyy-MM-dd}" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RepresentativesName" class="control-label"></label>
+                <input asp-for="RepresentativesName" class="form-control" />
+                <span asp-validation-for="RepresentativesName" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

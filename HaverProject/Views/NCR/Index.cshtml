@@ -1,0 +1,106 @@
+﻿@model IEnumerable<HaverProject.Models.NCR>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<h2 style="text-align:center">NCR Logs</h2>
+<hr />
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-action="Index" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <div class="form-horizontal">
+        <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            Filter/Search @ViewData["numberFilters"]
+        </button><br />
+        <div class="collapse @ViewData["ShowFilter"]" id="collapseFilter">
+            <div class="card card-body bg-light">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label class="control-label">NCR Number:</label>
+                        <input type="text" name="searchString" value="@ViewData["SearchString"]" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Date</label>
+                        @Html.TextBox("Date", @ViewData["Date"], new { @class = "form-control", type = "Date" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">PO Number:</label>
+                        <input type="text" name="poNumber" value="@ViewData["PONumber"]" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Supplier:</label>
+                        <select name="supplier" class="form-control">
+                            <option value="700285">700285 Niagara Machine</option>
+                            <option value="880065">880065 Bickle Main Industrial Supply </option>
+                            <option value="700397">700397 Niagara Precision</option>
+                            <option value="813024">813024 Tandem</option>
+                            <option value="813024">813024 Precision Metalworks</option>
+                            <option value="700013">700013 Welland Operations</option>
+                            <option value="880004">880004 Western Cast</option>
+                            @{
+                                var distinctSuppliers = Model.Select(n => n.Supplier).Distinct();
+                                foreach (var supplier in distinctSuppliers)
+                                {
+                                    <option value="@supplier">@supplier</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Status:</label>
+                        <input type="text" name="status" value="@ViewData["Status"]" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-4 align-self-end">
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
+                        <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NCRNumberSortParam"]">NCR Number</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParam"]">Date</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["PONumberSortParm"]">PONumber</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SupplierSortParm"]">Supplier</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SupplierSortParm"]">Status</a>
+            </th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.NCRNumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.Date)</td>
+                <td>@Html.DisplayFor(modelItem => item.PONumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.Supplier)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td><a asp-action="Details" asp-route-id="@item.ID">Details</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
