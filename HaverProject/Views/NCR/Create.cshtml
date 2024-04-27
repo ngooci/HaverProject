@@ -1,0 +1,149 @@
+﻿@model HaverProject.Models.NCR
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>NCR - Create</h1>
+<hr />
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="form-group ">                  
+                    <label asp-for="NCRNumber" class="control-label fw-bolder">NCR Number</label><span class="text-danger"></span>
+                    <input asp-for="NCRNumber" class="form-control" value="2024-0@(ViewData["NewNCR"])" readonly />
+                    <span asp-validation-for="NCRNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PONumber" class="control-label fw-bolder">PO Number</label><span class="text-danger">*</span>
+                    <input asp-for="PONumber" class="form-control" required />
+                    <span asp-validation-for="PONumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SupplierOrRecInspID" class="control-label fw-bolder">Inspection Type Supplier</label><span class="text-danger">*</span>
+                    <select asp-for="SupplierOrRecInspID" class="form-control" asp-items="ViewBag.rescpList" required>
+                        <option value="">Select a Rescp </option>
+                    </select>
+                    <span asp-validation-for="SupplierOrRecInspID" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SupplierId" class="control-label fw-bolder">
+                        Supplier
+                        <a asp-action="Create" asp-controller="Suppliers" role="button" data-bs-toggle="tooltip">
+                            <i class="fa-solid fa-circle-plus"></i>
+                        </a>
+                    </label><span class="text-danger">*</span>
+                    <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierList" required>
+                        <option value="">Select a Supplier </option>
+                    </select>
+                    <span asp-validation-for="SupplierId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label fw-bolder">ItemMarked</label><span class="text-danger">*</span><br />
+                    @foreach (var item in ViewBag.ItemList)
+                    {
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="ItemMarkedID" value="@item.Value">
+                            <label class="form-check-label">@item.Text</label>
+                        </div>
+                    }
+                </div>
+                <div class="form-group">
+                    <label asp-for="Date" class="control-label fw-bolder">Date</label>
+                    <input asp-for="Date" class="form-control" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" required readonly />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="RepresentativesName" class="control-label fw-bolder">Representatives Name</label><span class="text-danger">*</span>
+                    <input asp-for="RepresentativesName" class="form-control" required />
+                    <span asp-validation-for="RepresentativesName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="QuantityReceived" class="control-label fw-bolder">Quantity Received</label><span class="text-danger">*</span>
+                    <input asp-for="QuantityReceived" id="quantityReceived" class="form-control" required />
+                    <span asp-validation-for="QuantityReceived" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="QuantityDefected" class="control-label fw-bolder">Quantity Defected</label><span class="text-danger">*</span>
+                    <input asp-for="QuantityDefected" id="quantityDefected" class="form-control" required />
+                    <span asp-validation-for="QuantityDefected" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="SapId" class="control-label fw-bolder">Sap Number</label><span class="text-danger">*</span>
+                    <select asp-for="SapId" class="form-control" asp-items="ViewBag.SapId" required>
+                        <option value="">Select a SapNo.</option>
+                    </select>
+                    <span asp-validation-for="SapId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DescriptionItemID" class="control-label fw-bolder">
+                        Description
+                        <a asp-action="Create" asp-controller="ItemProblems" role="button" data-bs-toggle="tooltip">
+                            <i class="fa-solid fa-circle-plus"></i>
+                        </a>
+                    </label><span class="text-danger">*</span>
+                    <select asp-for="DescriptionItemID" class="form-control" asp-items="ViewBag.descList" required>
+                        <option value="">Select a Description </option>
+                    </select>
+                    <span asp-validation-for="DescriptionItemID" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DescriptionDefect" class="control-label fw-bolder">Defect Description</label><span class="text-danger"></span>
+                    <input asp-for="DescriptionDefect" class="form-control"  />
+                    <span asp-validation-for="DescriptionDefect" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="NCRPhotos" class="control-label fw-bolder">Upload Additional Images</label><br />
+                    <input type="file" name="Pictures" multiple onchange="handleFileSelection(this)" />
+                </div>
+
+
+                <div class="form-group">
+                    <label asp-for="Video" class="control-label fw-bolder">Video</label><span class="text-danger"></span>
+                    <input asp-for="Video" class="form-control"  />
+                    <span asp-validation-for="Video" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ncrEmail" class="control-label fw-bolder">NCR Email</label><span class="text-danger">*</span>
+                    <select asp-for="ncrEmail" class="form-control" asp-items="ViewBag.EmailList" required>
+                        <option value="">Select a email </option>
+                    </select>
+                    <span asp-validation-for="ncrEmail" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-primary">Back to List</a>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Client-side validation to ensure Quantity Received is greater than or equal to Quantity Defected
+        $('#quantityReceived, #quantityDefected').change(function () {
+            var quantityReceived = parseInt($('#quantityReceived').val());
+            var quantityDefected = parseInt($('#quantityDefected').val());
+            if (quantityReceived < quantityDefected) {
+                $('#quantityReceived').val('');
+                $('#quantityDefected').val('');
+                alert("Quantity Received must be more or equal to Quantity Defected.");
+            }
+        });
+    </script>
+}
+@*</html>*@

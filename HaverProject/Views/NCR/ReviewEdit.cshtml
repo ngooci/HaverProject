@@ -1,0 +1,116 @@
+﻿@model HaverProject.Models.NCR
+
+@{
+    ViewData["Title"] = "ReviewEdit";
+}
+
+<h1>NCR - Review Edit</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ReviewEdit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+
+                <div class="form-group">
+                    <label class="control-label fw-bolder">Re-Inspected Acceptable?</label>
+                    <p>(If "No" then record new NCR number)</p>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input review-checkbox" id="reiyes" name="reinyes" value="true" required />
+                        <label class="form-check-label" for="reinyes"></label>
+                    </div>
+                  
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="newNcrnno" class="control-label fw-bolder">New NCR Number:</label><span class="text-danger"></span>
+                    <input asp-for="newNcrnno" class="form-control" />
+                    <span asp-validation-for="newNcrnno" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="InspectorName" class="control-label fw-bolder">Inspector's Name</label><span class="text-danger">*</span>
+                    <input asp-for="InspectorName" class="form-control" required />
+                    <span asp-validation-for="InspectorName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="finalDate" class="control-label fw-bolder">Date</label><span class="text-danger">*</span>
+                    <input asp-for="finalDate" class="form-control" type="date" asp-format="{0:yyyy-MM-dd}" required readonly />
+                    <span asp-validation-for="finalDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label fw-bolder">Ncr Closed</label>
+                    <div>
+                        <input type="checkbox" class="form-check-input ncrclosed-checkbox" id="ncrclosedyes" name="ncrclosedyes" value="true" required />
+                        <label class="form-check-label" for="ncrclosedyes"></label>
+                    </div>
+                   
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Qualitydepartment" class="control-label fw-bolder">Quality Department</label><span class="text-danger">*</span>
+                    <input asp-for="Qualitydepartment" class="form-control" required />
+                    <span asp-validation-for="Qualitydepartment" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="finalDate" class="control-label fw-bolder">Date</label><span class="text-danger">*</span>
+                    <input asp-for="finalDate" class="form-control" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" required readonly />
+                    <span asp-validation-for="finalDate" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <label asp-for="ncrEmail" class="control-label fw-bolder">NCR Email</label><span class="text-danger">*</span>
+                    <select asp-for="ncrEmail" class="form-control" asp-items="ViewBag.EmailList" required>
+                        <option value="">Select an email </option>
+                    </select>
+                    <span asp-validation-for="ncrEmail" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    <a asp-action="Details" asp-route-id="@Model?.ID" class="btn btn-primary">Back to Ncr Log</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            // Function to format the date to yyyy-MM-dd format
+            function formatDate(date) {
+                var d = date.getDate();
+                var m = date.getMonth() + 1; // Month from 0 to 11
+                var y = date.getFullYear();
+                return y + '-' + (m < 10 ? '0' : '') + m + '-' + (d < 10 ? '0' : '') + d;
+            }
+
+            // Set today's date to the finalDate field
+            var today = new Date();
+            $('#finalDate').val(formatDate(today));
+
+            $('.review-checkbox').change(function () {
+                $('.review-checkbox').not(this).prop('checked', false);
+            });
+
+            $('.ncrclosed-checkbox').change(function () {
+                $('.ncrclosed-checkbox').not(this).prop('checked', false);
+            });
+
+            // To avoid infinite loop due to required field
+            $('.review-checkbox, .ncrclosed-checkbox').click(function () {
+                $(this).attr('required', 'required');
+                $('.review-checkbox, .ncrclosed-checkbox').not(this).removeAttr('required');
+            });
+        });
+    </script>
+}

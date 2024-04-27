@@ -1,0 +1,365 @@
+﻿@model HaverProject.Models.NCR
+
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h4 style="text-align:center">Main Details</h4>
+<hr />
+
+<table class="table table-bordered table-responsive table-hover">
+    <tr style="text-align:center">
+        <th style="color:#0C2340; font-weight:bold">HAVER & BOECKER CANADA</th>
+        <th>INTERNAL PROCESS DOCUMENT</th>
+        <th colspan="2"><img src="~/images/Logo_NCR.png" height="100px" width="130px" /></th>
+    </tr>
+    <tr style="text-align:center">
+        <td>Document No. :</td>
+        <td>Document title</td>
+        <td colspan="2">Page of:</td>
+    </tr>
+    <tr style="text-align:center">
+        <th>OPS-00011</th>
+        <th>Non-Conformance Report</th>
+        <th colspan="2">1 of 3</th>
+    </tr>
+    <tr>
+        <th>
+            Identify Process Applicable:<br />
+        
+            @Html.DisplayFor(model => model.SupplierOrRecInsp.Name)
+       
+        </th>
+        <th>
+            Supplier Name: <br />
+            @Html.DisplayFor(model => model.Supplier.Name)
+        </th>
+        <th>NCR No.</th>
+        <td>
+            @Html.DisplayFor(model => model.NCRNumber)
+        </td>
+    </tr>
+    </table>
+
+<h4 style="text-align:center">Further Details</h4>
+<hr />
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                Quality Representative
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                <table class="table table-bordered table-responsive table-hover">
+                    <tr>
+                        <th colspan="3">PO or PROD No.</th>
+                        <td>
+                            @Html.DisplayFor(model => model.PONumber)
+                        </td>                        
+                    </tr>
+                    <tr>
+                        <th colspan="3">Sales Order No.</th>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <strong>Description of Item (including SAP No.):</strong><br />
+                            @Html.DisplayFor(model => model.SapId)
+                            @Html.DisplayFor(model => model.DescriptionItemID)
+
+                        </td>
+                        <th>Quantity Received:</th>
+                        <td>
+                            @Html.DisplayFor(model => model.QuantityReceived)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"></td>
+                        <th>Quantity Defective:</th>
+                        <td>
+                            @Html.DisplayFor(model => model.QuantityDefected)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <strong>Description of Defect:(in as much detail as possible, use page 2 if necessary): </strong><br />
+                            @Html.DisplayFor(model => model.DescriptionDefect)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Item marked Nonconforming<br />
+                            <label style="font-weight:400">
+                                @Html.DisplayFor(model => model.ItemMarked.Name) 
+                            </label>
+                          
+                        </th>
+                        <td colspan="3" style="text-align:end">
+                            Completed NCR to be forwarded to HBC Engineering and<br />
+                            Operations Manager complete with any relevant documents<br />
+                            attached (pictures, actual measurements, material certs, etc.)
+                        </td>
+                    </tr>
+                    <tr style="text-align:end">
+                        <td colspan="2">
+                            <strong>Quality Representative's Name: </strong><br />
+                            @Html.DisplayFor(model => model.RepresentativesName)
+                        </td>
+                        <td colspan="2">
+                            <strong>Date</strong><br />
+                            @Html.DisplayFor(model => model.Date)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="3">Image</th>
+                        <td>
+                            @{
+                                if (Model.NCRPhotos?.Any() ?? false)
+                                {
+                                    foreach (var image in Model.NCRPhotos)
+                                    {
+                                        string imageBase64 = Convert.ToBase64String(image.Content);
+                                        string imageSrc = string.Format("data:" + image.MimeType + ";base64,{0}", imageBase64);
+                                        <img src="@imageSrc" alt="Customer Image" title="Customer Image" class="img-fluid rounded" />
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="3">Video</th>
+                        <td>
+                            <a href="@Model.Video">@Html.Raw(Model.Video)</a>
+                        </td>
+                    </tr>
+                </table>
+                @if (User.Identity.IsAuthenticated)
+                {
+
+                    @if (User.IsInRole("QualityInspector") || User.IsInRole("Admin"))
+                    {
+                        <div><a asp-action="QualityEdit" asp-route-id="@Model?.ID" class="btn btn-sm btn-success">Quality Edit</a></div>
+                    }
+                }
+               
+
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                Engineering
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <table class="table table-bordered table-responsive table-hover">                  
+                    <tr>
+                        <td><strong>Review by HBC Engineering:</strong> (indicate disposition by "checking" one of the following)</td>
+                    <th>
+                        <br />
+                        @Html.DisplayFor(model => model.UseAsIs.Name)
+                    </th>
+                    </tr>
+                    <tr>
+                    <td>
+                        <strong>Does Customer require notification of NCR </strong><br />
+                        (If "Yes" then raise message to customer detailing issues)
+                    </td>
+                    <td colspan="2" style="text-align:end">
+                        @Html.DisplayFor(model => model.CustomerYes) YES
+                    </td>
+                   
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <strong>Disposition</strong> (Sequence of work steps required when "repair" or "rework" indicated) :<br />
+                            @Html.DisplayFor(model => model.Disposition)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Does the drawing require updating</td>
+                        <td>
+                            @Html.DisplayFor(model => model.DrawingYes) Yes
+                        </td>
+                      
+                    </tr>
+                    <tr>
+                        <td>Original Rev. Number:</td>
+                        <td>
+                            @Html.DisplayFor(model => model.OriginalRev)
+                        </td>
+                        <td>Updated Rev. Number: </td>
+                        <td colspan="2">
+                            @Html.DisplayFor(model => model.UpdatedRev)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Name of Engineer:</td>
+                        <td>
+                            @Html.DisplayFor(model => model.NameOfEngineer)
+                        </td>
+                        <td>Revision Date:</td>
+                        <td colspan="2">
+                            @Html.DisplayFor(model => model.RevisingDate)
+                        </td>
+                    </tr>
+                    <tr style="text-align:end">
+                        <td colspan="3">
+                            <strong>Engineering:</strong><br />
+                            @Html.DisplayFor(model => model.Engineer)
+                        </td>
+                        <td colspan="2">
+                            <strong>Date</strong><br />
+                            @Html.DisplayFor(model => model.Date)
+                        </td>
+                    </tr>
+                </table>
+            @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Admin") || User.IsInRole("Engineer"))
+                {
+                    <div> <a asp-action="EngineerEdit" asp-route-id="@Model?.ID" class="btn btn-sm btn-success">Edit/FillData</a></div>
+                }
+
+            }
+        </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                Purchase
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <table class="table table-bordered table-responsive table-hover">
+                    <tr>
+                        <th colspan="4">Purchasing's Preliminary Decision:</th>
+                        <td></td>
+                    </tr>
+                    <tr style="text-align:end">
+                    <td>
+                        @Html.DisplayFor(model => model.reviewyes) Yes
+                    </td>
+                  
+                      
+
+                    <tr>
+
+                        <td>
+                            &nbsp;&nbsp;&nbsp;   @Html.DisplayFor(model => model.PreliminaryDecision)
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>Was a CAR raised?</td>
+                        <td>
+                                @Html.DisplayFor(model => model.CARYes) Yes
+                        </td>
+                     
+                        <td colspan="2">If "Yes" indicate CAR #</td>
+                    </tr>
+                    <tr>
+                        <td>Follow-up Required?</td>
+                        <td>
+                                @Html.DisplayFor(model => model.FollowupYes) Yes
+                        </td>
+                  
+                        <td colspan="2">If "Yes" indicate type & expected date</td>
+                    </tr>
+                    <tr style="text-align:end">
+                        <td colspan="3">
+                            <strong>Operations Manager: </strong><br />
+                                @Html.DisplayFor(model => model.OperatingManagerName)
+                        </td>
+                        <td colspan="2">
+                            <strong>Date</strong><br />
+                                @Html.DisplayFor(model => model.Date)
+                        </td>
+                    </tr>
+                </table>
+                  @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Admin") || User.IsInRole("Purchase"))
+                {
+                    <a asp-action="PurchaseEdit" asp-route-id="@Model?.ID" class="btn btn-sm btn-success">Purchase Edit</a>
+                }
+
+            }
+        </div>
+        </div>
+    </div>
+<div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+            Review
+        </button>
+    </h2>
+    <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
+        <div class="accordion-body">
+            <table class="table table-bordered table-responsive table-hover">
+
+                <tr>
+                    <td>	Re-Inspected Acceptable?</td>
+                    <td>
+                        @Html.DisplayFor(model => model.reinyes) Yes
+                    </td>
+                 
+                    <td colspan="2">(If "No" then record new NCR number)</td>
+                </tr>
+                <tr>
+                    
+                <tr style="text-align:end">
+                    <td colspan="3">
+                        <strong>New Ncr No. </strong><br />
+                            @Html.DisplayFor(model => model.newNcrnno)
+                    </td>
+                    <td colspan="3">
+                        <strong>Inspector's Name </strong><br />
+                            @Html.DisplayFor(model => model.InspectorName)
+                    </td>
+                    <td colspan="2">
+                        <strong>Date</strong><br />
+                            @Html.DisplayFor(model => model.finalDate)
+                    </td>
+                </tr>
+                <tr>
+                <tr style="text-align:end">
+                    <td colspan="3">
+                        <strong>Ncr Closed</strong><br />
+                    <td>
+                                    @Html.DisplayFor(model => model.ncrclosenyes) Yes
+                    </td>
+                  
+                    <td colspan="3">
+                        <strong>Quality Department</strong><br />
+                                @Html.DisplayFor(model => model.Qualitydepartment)
+                    </td>
+                    <td colspan="2">
+                        <strong>Date</strong><br />
+                                @Html.DisplayFor(model => model.finalDate)
+                    </td>
+                </tr>
+            </table>
+              @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Admin") || User.IsInRole("Review"))
+                {
+                    <a asp-action="ReviewEdit" asp-route-id="@Model?.ID" class="btn btn-sm btn-success">Review Edit</a>
+                }
+            }
+                </div>
+    </div>
+</div>
+<div style="margin-top:20px">
+    <a asp-action="Index" class="btn btn-primary">Back to Ncr Log</a>
+</div>

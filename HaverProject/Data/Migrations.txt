@@ -1,0 +1,7 @@
+﻿Add-Migration -Context HaverContext -o Data\HMigrations Initial
+Update-Database -Context HaverContext
+
+Put at end of Up()
+
+Add To Migration:
+ExtraMigration.Steps(migrationBuilder);

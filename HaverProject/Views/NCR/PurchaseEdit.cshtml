@@ -1,0 +1,119 @@
+﻿@model HaverProject.Models.NCR
+
+@{
+    ViewData["Title"] = "PurchaseEdit";
+}
+
+<h1>NCR - Purchase Edit</h1>
+<hr />
+
+<form asp-action="PurchaseEdit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="ID" />
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group">
+                    <label class="control-label fw-bolder">Re-Inspected Acceptable?</label><span class="text-danger"></span>
+                    <p>(If "No" then record new NCR number)</p>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input review-checkbox" id="reviewyes" name="yes" value="true"  />
+                        <label class="form-check-label" for="reviewyes"></label>
+                    </div>
+               
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PreliminaryDecision" class="control-label fw-bolder">Preliminary Decision</label><span class="text-danger"></span>
+                    <input asp-for="PreliminaryDecision" class="form-control"  />
+                    <span asp-validation-for="PreliminaryDecision" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label fw-bolder">Was a CAR raised?</label><span class="text-danger"></span>
+                    <p>(If "Yes" indicate CAR #)</p>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input car-checkbox" id="CARYes" name="CARYes" value="true" />
+                        <label class="form-check-label" for="CARYes"></label>
+                    </div>
+
+                  
+                </div>
+
+                <div class="col-sm">
+                    <div class="form-group">
+                        <label class="control-label fw-bolder">Follow-up Required? </label><span class="text-danger"></span>
+                        <p>(If "Yes" indicate type & expected date)</p>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input followup-checkbox" id="followupYes" name="FollowupYes" value="true" />
+                            <label class="form-check-label" for="followupYes"></label>
+                        </div>
+                
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PurchaseDate" class="control-label fw-bolder">Date</label><span class="text-danger">*</span>
+                   
+                    <input asp-for="PurchaseDate" class="form-control" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" required readonly />
+                    <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="OperatingManagerName" class="control-label fw-bolder">Operating Manager</label><span class="text-danger">*</span>
+                    <input asp-for="OperatingManagerName" class="form-control" required />
+                    <span asp-validation-for="OperatingManagerName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ncrEmail" class="control-label fw-bolder">NCR Email</label><span class="text-danger">*</span>
+                    <select asp-for="ncrEmail" class="form-control" asp-items="ViewBag.EmailList" required>
+                        <option value="">Select an email </option>
+                    </select>
+                    <span asp-validation-for="ncrEmail" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-action="Details" asp-route-id="@Model?.ID" class="btn btn-primary">Back to Ncr Log</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+<script>
+    $(document).ready(function () {
+        // Function to format the date to yyyy-MM-dd format
+        function formatDate(date) {
+            var d = date.getDate();
+            var m = date.getMonth() + 1; // Month from 0 to 11
+            var y = date.getFullYear();
+            return y + '-' + (m < 10 ? '0' : '') + m + '-' + (d < 10 ? '0' : '') + d;
+        }
+
+        // Set today's date to the PurchaseDate field
+        var today = new Date();
+        $('#purchaseDate').val(formatDate(today));
+
+        $('.review-checkbox').change(function () {
+            $('.review-checkbox').not(this).prop('checked', false);
+        });
+
+        $('.car-checkbox').change(function () {
+            $('.car-checkbox').not(this).prop('checked', false);
+        });
+
+        $('.followup-checkbox').change(function () {
+            $('.followup-checkbox').not(this).prop('checked', false);
+        });
+
+        // To avoid infinite loop due to required field
+        $('.review-checkbox, .car-checkbox, .followup-checkbox').click(function () {
+            $(this).attr('required', 'required');
+            $('.review-checkbox, .car-checkbox, .followup-checkbox').not(this).removeAttr('required');
+        });
+    });
+</script>
+

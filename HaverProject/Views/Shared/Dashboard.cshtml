@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, auto);
+        }
+
+        .grid-item {
+            border: none;
+            padding: 20px;
+            text-align: center;
+        }
+
+            .grid-item:nth-child(1) {
+                grid-row: span 2;
+                grid-column: 1;
+            }
+        /* Additional styling for the chart container */
+        /*        #chart-container {
+                    width: 50%;
+                    margin: 0 auto;
+                    l
+                }*/
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align:center">Dashboard</h1>
+    <div class="container">
+        <div class="p-2">
+            @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Admin") || User.IsInRole("QualityInspector"))
+                {
+                    <a asp-action="Create" asp-controller="NCR" class="btn btn-sm btn-outline-success"
+                       role="button" data-bs-toggle="tooltip">
+                        <strong>Create New NCR</strong>
+                    </a>
+                }
+            }
+        </div>
+        <div class="grid-container">
+            <div class="grid-item">
+                <a href="#" class="text-decoration-none text-dark">
+                    <div class="p-3 lh-base h-100">
+                        <div id="chart-container">
+                            <canvas id="myPieChart"></canvas>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="grid-item">
+                <a href="@Url.Action("EngineeringNcr", "NCR")" class="text-decoration-none text-dark">
+                    <div class="p-3 mb-3 bg-light border shadow-sm d-flex justify-content-around align-items-center rounded">
+                        <div>
+                            <h3 class="fs-2" asp-controller="NCR">@ViewData["EngineeringNcrCount"]</h3>
+                            <p class="fs-5">NCRs</p>
+                            <figcaption class="blockquote-footer">Engineering Stage</figcaption>
+                        </div>
+                        <i class="fa-solid fa-gears fa-3x"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="grid-item">
+                <a href="@Url.Action("PurchaseNcr", "NCR")" class="text-decoration-none text-dark">
+                    <div class="p-3 mb-3 bg-light border shadow-sm d-flex justify-content-around align-items-center rounded">
+                        <div>
+                            <h3 class="fs-2" asp-controller="NCR">@ViewData["PurchaseNcrCount"]</h3>
+                            <p class="fs-5">NCRs</p>
+                            <figcaption class="blockquote-footer">Purchase Stage</figcaption>
+                        </div>
+                        <i class="fa-solid fa-circle-check fa-3x"></i>
+                    </div>
+                </a>
+
+            </div>
+            <div class="grid-item">
+                <a href="@Url.Action("ReviewNcr", "NCR")" class="text-decoration-none text-dark">
+                    <div class="p-3 mb-3 bg-light border shadow-sm d-flex justify-content-around align-items-center rounded">
+                        <div>
+                            <h3 class="fs-2" asp-controller="NCR">@ViewData["ReviewNcrCount"]</h3>
+                            <p class="fs-5">NCRs</p>
+                            <figcaption class="blockquote-footer">Review Stage</figcaption>
+                        </div>
+                        <i class="fa-solid fa-user-check fa-3x"></i>
+                    </div>
+                </a>
+
+            </div>
+              @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="grid-item">
+                        <a href="@Url.Action("ClosedNcr", "NCR")" class="text-decoration-none text-dark">
+                    <div class="p-3 mb-3 bg-light border shadow-sm d-flex justify-content-around align-items-center rounded">
+                        <div>
+                            <h3 class="fs-2" asp-controller="NCR">@ViewData["ClosedNcrCount"]</h3>
+                            <p class="fs-5">NCRs</p>
+                            <figcaption class="blockquote-footer">Closed Stage</figcaption>
+                        </div>
+                        <i class="fa-solid fa-lock fa-3x"></i>
+                    </div>
+                </a>
+
+            </div>}}
+            <div class="grid-item">
+                <a href="@Url.Action("Index", "NCR")" class="text-decoration-none text-dark">
+                    <div class="p-3 mb-3 bg-light border shadow-sm d-flex justify-content-around align-items-center rounded">
+                        <div>
+                            <h3 class="fs-2" asp-controller="NCR">@ViewData["AllNcrCount"]</h3>
+                            <p class="fs-5">All NCRs</p>
+                        </div>
+                        <i class="fa-solid fa-list-ol fa-3x"></i>
+                    </div>
+                </a>
+
+            </div>
+              @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="grid-item">
+                        <a href="@Url.Action("ArchievedNcr", "NCR")" class="text-decoration-none text-dark">
+                            <div class="p-3 mb-3 bg-light border shadow-sm d-flex justify-content-around align-items-center rounded">
+                                <div>
+                                    <h3 class="fs-2" asp-controller="NCR">@ViewData["ArchievedNcrCount"]</h3>
+                                    <p class="fs-5">Archived NCRs</p>
+                                </div>
+                                <i class="fa-regular fa-folder-closed fa-3x"></i>
+                            </div>
+                        </a>
+
+                    </div>
+                    <div class="grid-item">
+                        <a href="#" class="text-decoration-none text-dark">
+                    <a href="@Url.Action("VoidNcr", "NCR")" class="text-decoration-none text-dark">
+                        <div class="p-3 mb-3 bg-light border shadow-sm d-flex justify-content-around align-items-center rounded">
+                            <div>
+                                <h3 class="fs-2" asp-controller="NCR">@ViewData["VoidNcrCount"]</h3>
+                                <p class="fs-5">Void NCRs</p>
+                            </div>
+                            <i class="fa-regular fa-circle-xmark fa-3x"></i>
+                        </div>
+                    </a>
+                </a>
+            </div>}}
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var data = {
+                labels: ["Engineering NCRs", "Purchase NCRs", "Review NCRs", "Closed NCRs", "Archived NCRs", "Void NCRs"],
+                datasets: [{
+                    data: [
+                        parseInt('@ViewData["EngineeringNcrCount"]'),
+                        parseInt('@ViewData["PurchaseNcrCount"]'),
+                        parseInt('@ViewData["ReviewNcrCount"]'),
+                        parseInt('@ViewData["ClosedNcrCount"]'),
+                        parseInt('@ViewData["ArchievedNcrCount"]'),
+                        parseInt('@ViewData["VoidNcrCount"]')
+                    ],
+                    backgroundColor: [
+                        'rgba(1, 92, 146, 1)',
+                        'rgba(45, 130, 181, 1)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(136, 205, 246, 1)',
+                        'rgba(188, 230, 255, 1)',
+                        'rgba(112, 150, 209, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(1, 92, 146, 1)',
+                        'rgba(45, 130, 181, 1)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(136, 205, 246, 1)',
+                        'rgba(188, 230, 255, 1)',
+                        'rgba(112, 150, 209, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            var ctx = document.getElementById('myPieChart').getContext('2d');
+            var myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: data,
+                //edit the properties for pie chart here
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        });
+    </script>
+</body>
+</html>

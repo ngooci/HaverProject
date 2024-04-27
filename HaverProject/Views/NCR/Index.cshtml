@@ -1,0 +1,233 @@
+﻿@model IEnumerable<HaverProject.Models.NCR>
+
+@{
+    ViewData["Title"] = "Index";
+}<!--this is index html-->
+
+
+<h2 style="text-align:center">NCR Logs</h2>
+<hr />
+
+<p>
+      @if (User.Identity.IsAuthenticated)
+            {
+        @if (User.IsInRole("Admin") || User.IsInRole("QualityInspector"))
+        {
+            <a asp-action="Create" asp-controller="NCR" class="btn btn-sm btn-outline-success"
+       role="button" data-bs-toggle="tooltip">
+        <strong>Create New</strong>
+    </a>}}
+</p>
+<form asp-action="Index" method="get">
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <div class="form-horizontal">
+        <button class="btn btn-sm btn-outline-success @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            <strong>Filter/Search</strong> @ViewData["numberFilters"]
+        </button><br />
+        <div class="collapse @ViewData["ShowFilter"]" id="collapseFilter">
+            <div class="card card-body bg-light">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label class="control-label">NCR Number:</label>
+                        <input type="text" name="searchString" value="@ViewData["SearchString"]" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Date</label>
+                        @Html.TextBox("Date", @ViewData["Date"], new { @class = "form-control", type = "Date" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">PO Number:</label>
+                        <input type="text" name="poNumber" value="@ViewData["PONumber"]" class="form-control" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Supplier:</label>
+                        <select name="supplier" class="form-control">
+                            <option value="">-- Select Supplier --</option>
+                            @foreach (var item in (SelectList)ViewData["DistinctSuppliers"])
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Status:</label>
+                        <select name="status" class="form-control">
+                            <option value="">Select Status</option>
+
+                            <option value="Quality">Quality</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Purchase">Purchase</option>
+                            <option value="Review">Review</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-4 align-self-end">
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
+                        <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th> <a asp-action="Index" asp-route-sortField="NCRNumber" asp-route-sortDirection="@ViewData["NCRNumberSortParam"]">NCR Number</a></th>
+                <th>
+                    <a asp-action="Index" asp-route-sortField="Date" asp-route-sortDirection="@ViewData["DateSortParam"]">Date</a>
+                </th>
+                <th>
+                    PONumber
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortField="Supplier" asp-route-sortDirection="@ViewData["SupplierSortParam"]">Supplier</a>
+                </th>
+
+                <th>
+                   Status
+                </th>
+            
+<th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.Status != "Closed" && item.Status != "Archive" && item.Status != "Void")
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.NCRNumber)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Date)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PONumber)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Supplier.Name)</td>
+                        <td>
+                            @if (item.Status == "Closed")
+                            {
+                                <i class="fa-solid fa-circle" style="color: red;"></i>
+                            }
+                            else if (item.Status == "Archive")
+                            {
+                                <i class="fa-solid fa-circle" style="color: darkblue;"></i>
+                            }
+                            else if (item.Status == "Engineering")
+                            {
+                                <i class="fa-solid fa-circle" style="color: orange;"></i>
+                            }
+                            else if (item.Status == "Purchase")
+                            {
+                                <i class="fa-solid fa-circle" style="color: green;"></i>
+                            }
+                            else if (item.Status == "Review")
+                            {
+                                <i class="fa-solid fa-circle" style="color: gray;"></i>
+                            }
+                            else if (item.Status == "Void")
+                            {
+                                <i class="fa-solid fa-circle" style="color: lightskyblue;"></i>
+                            }
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary"
+                               role="button" data-bs-toggle="tooltip" title="NCR Details">
+                                <i class="fa-solid fa-circle-info fa-1x"></i>
+                            </a>
+                            <a asp-action="Detailspdf" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary"
+                               role="button" data-bs-toggle="tooltip" title="Generate Pdf">
+                                <i class="fa-solid fa-file-pdf fa-1x"></i>
+                            </a>
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                <a class="btn btn-sm btn-outline-primary voidncrbutton"
+                                   data-bs-toggle="tooltip" title="Void Ncr" data-ncr-id="@item.ID">
+                                    <i class="fa-regular fa-circle-xmark fa-1x"></i>
+                                </a>
+                            }
+                            <div id="commentModal-@item.ID" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="commentModalLabel">Void NCR Comment</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label for="VoidReason">Comment:</label><br>
+                                            <input type="text" id="VoidReason-@item.ID" name="VoidReason" class="form-control"><br>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button asp-action="Void" asp-route-id="@item.ID" class="btn btn-primary submitComment">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+
+
+
+    </tbody>
+</table>
+    <a asp-action="DashBoard" asp-controller="NCR" class="btn btn-sm btn-outline-success"
+       role="button" data-bs-toggle="tooltip">
+        <strong>Back to Dashboard</strong>
+    </a>
+<partial name="_PagingNavBar" />
+</form>
+@*@section Scripts {
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+        function voidNcrConfirm(ncrId) {
+            var confirmed = confirm("Are you sure you want to void NCR " + ncrId + "?");
+            if (confirmed) {
+                // Redirect to Void action with NCR ID using URL template literal
+                window.location.href = `@Url.Action("Void", "NCR")?id=${ncrId}`;
+            }
+        }
+    </script>
+}*@
+<script>
+    // Event listener for void NCR buttons
+    document.querySelectorAll('.voidncrbutton').forEach(function (button) {
+        button.addEventListener("click", function () {
+            // Extract NCR ID from data attribute
+            var ncrId = this.getAttribute("data-ncr-id");
+
+            // Display the corresponding comment modal
+            var commentModal = document.getElementById("commentModal-" + ncrId);
+            if (commentModal) {
+                $(commentModal).modal('show');
+            }
+        });
+    });
+
+    // Event listener for submit buttons within comment modals
+    document.querySelectorAll('.submitComment').forEach(function (button) {
+        button.addEventListener("click", function () {
+            // Retrieve the NCR ID associated with the comment modal
+            var ncrId = this.closest(".modal").getAttribute("id").split("-")[1];
+
+            // Get the comment entered in the modal
+            var comment = document.getElementById("VoidReason-" + ncrId).value;
+            console.log("Submitted comment for NCR " + ncrId + ":", comment);
+
+            // Hide the corresponding comment modal
+            var commentModal = document.getElementById("commentModal-" + ncrId);
+            if (commentModal) {
+                $(commentModal).modal('hide');
+            }
+        });
+    });
+
+</script>
